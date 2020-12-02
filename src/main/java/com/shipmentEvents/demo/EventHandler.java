@@ -139,6 +139,123 @@ public class EventHandler implements RequestHandler<ScheduledEvent, String> {
             filesProcessed.add(new KeyVersion(summary.getKey()));
             logger.log("logging Contents of the file" + fileContents);
         }
+        for (Iterator<?> iterator = files.getObjectSummaries().iterator(); iterator.hasNext(); ) {
+            S3ObjectSummary summary = (S3ObjectSummary) iterator.next();
+            logger.log("Reading Object: " + summary.getKey());
+
+            String trackingNumber = summary.getKey().split("--")[0];
+            Pair<Long, String> lastKnownStatus = latestStatusForTrackingNumber.get(trackingNumber);
+
+            // Check if this shipment has already been delivered, skip this file
+            if (lastKnownStatus != null && "DELIVERED".equals(lastKnownStatus.getRight())) {
+                continue;
+            }
+
+            String fileContents = s3Client.getObjectAsString(bucketName, summary.getKey());
+
+            if (!isValidFile(fileContents)) {
+                logger.log(String.format("Skipping invalid file %s", summary.getKey()));
+                continue;
+            }
+            
+            if (!fileContents.contains("\n")) {
+                
+            }
+            String[] lines = fileContents.split("\n");
+            String line1 = lines[0];
+            String line2 = lines[1];
+
+            String status = line1.split(":")[1];
+            Long timeStamp = Long.parseLong(line2.split(":")[1]);
+
+
+            if (null == lastKnownStatus || lastKnownStatus.getLeft() < timeStamp) {
+                lastKnownStatus = new MutablePair<Long, String>(timeStamp, status);
+                latestStatusForTrackingNumber.put(trackingNumber, lastKnownStatus);
+            }
+
+            //Add to list of processed files
+            filesProcessed.add(new KeyVersion(summary.getKey()));
+            logger.log("logging Contents of the file" + fileContents);
+        }
+        for (Iterator<?> iterator = files.getObjectSummaries().iterator(); iterator.hasNext(); ) {
+            S3ObjectSummary summary = (S3ObjectSummary) iterator.next();
+            logger.log("Reading Object: " + summary.getKey());
+
+            String trackingNumber = summary.getKey().split("--")[0];
+            Pair<Long, String> lastKnownStatus = latestStatusForTrackingNumber.get(trackingNumber);
+
+            // Check if this shipment has already been delivered, skip this file
+            if (lastKnownStatus != null && "DELIVERED".equals(lastKnownStatus.getRight())) {
+                continue;
+            }
+
+            String fileContents = s3Client.getObjectAsString(bucketName, summary.getKey());
+
+            if (!isValidFile(fileContents)) {
+                logger.log(String.format("Skipping invalid file %s", summary.getKey()));
+                continue;
+            }
+            
+            if (!fileContents.contains("\n")) {
+                
+            }
+            String[] lines = fileContents.split("\n");
+            String line1 = lines[0];
+            String line2 = lines[1];
+
+            String status = line1.split(":")[1];
+            Long timeStamp = Long.parseLong(line2.split(":")[1]);
+
+
+            if (null == lastKnownStatus || lastKnownStatus.getLeft() < timeStamp) {
+                lastKnownStatus = new MutablePair<Long, String>(timeStamp, status);
+                latestStatusForTrackingNumber.put(trackingNumber, lastKnownStatus);
+            }
+
+            //Add to list of processed files
+            filesProcessed.add(new KeyVersion(summary.getKey()));
+            logger.log("logging Contents of the file" + fileContents);
+        }
+        for (Iterator<?> iterator = files.getObjectSummaries().iterator(); iterator.hasNext(); ) {
+            S3ObjectSummary summary = (S3ObjectSummary) iterator.next();
+            logger.log("Reading Object: " + summary.getKey());
+
+            String trackingNumber = summary.getKey().split("--")[0];
+            Pair<Long, String> lastKnownStatus = latestStatusForTrackingNumber.get(trackingNumber);
+
+            // Check if this shipment has already been delivered, skip this file
+            if (lastKnownStatus != null && "DELIVERED".equals(lastKnownStatus.getRight())) {
+                continue;
+            }
+
+            String fileContents = s3Client.getObjectAsString(bucketName, summary.getKey());
+
+            if (!isValidFile(fileContents)) {
+                logger.log(String.format("Skipping invalid file %s", summary.getKey()));
+                continue;
+            }
+            
+            if (!fileContents.contains("\n")) {
+                
+            }
+            String[] lines = fileContents.split("\n");
+            String line1 = lines[0];
+            String line2 = lines[1];
+
+            String status = line1.split(":")[1];
+            Long timeStamp = Long.parseLong(line2.split(":")[1]);
+
+
+            if (null == lastKnownStatus || lastKnownStatus.getLeft() < timeStamp) {
+                lastKnownStatus = new MutablePair<Long, String>(timeStamp, status);
+                latestStatusForTrackingNumber.put(trackingNumber, lastKnownStatus);
+            }
+
+            //Add to list of processed files
+            filesProcessed.add(new KeyVersion(summary.getKey()));
+            logger.log("logging Contents of the file" + fileContents);
+        }
         return filesProcessed;
     }
     
